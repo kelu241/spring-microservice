@@ -3,12 +3,21 @@ package com.luciano.conversao_ativa.model;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ConversaoAtiva {
+  @JsonProperty("id")
   private Long id;
+  @JsonProperty("from")
   private String from;
+  @JsonProperty("to")
   private String to;
   private BigDecimal quantity;
+  @JsonProperty("enviroment")
   private String enviroment;
+  @JsonAlias("correntMultiple")
+  @JsonProperty("conversionMultiple")
   private BigDecimal conversionMultiple;
   private BigDecimal totalCalculatedAmount;
 

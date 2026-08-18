@@ -16,7 +16,7 @@ public class ConversaoCorrenteModel {
   private String from;
   @Column(name = "to_conversion")
   private String to;
-  private BigDecimal quantity;
+  @Column(name = "corrent_multiple")
   private BigDecimal correntMultiple;
 
   public BigDecimal getCorrentMultiple() {
@@ -30,21 +30,19 @@ public class ConversaoCorrenteModel {
   @Column(name = "port")
   private String enviroment;
 
-  public ConversaoCorrenteModel(Long id, String from, String to, BigDecimal quantity, BigDecimal correntMultiple,
+  public ConversaoCorrenteModel(Long id, String from, String to, BigDecimal correntMultiple,
       String enviroment) {
     this.id = id;
     this.from = from;
     this.to = to;
-    this.quantity = quantity;
     this.enviroment = enviroment;
     this.correntMultiple = correntMultiple;
   }
 
-  public ConversaoCorrenteModel(Long id, String from, String to, BigDecimal quantity, String enviroment) {
+  public ConversaoCorrenteModel(Long id, String from, String to, String enviroment) {
     this.id = id;
     this.from = from;
     this.to = to;
-    this.quantity = quantity;
     this.enviroment = enviroment;
   }
 
@@ -56,10 +54,9 @@ public class ConversaoCorrenteModel {
     this.enviroment = enviroment;
   }
 
-  public ConversaoCorrenteModel(Long id, String from, BigDecimal quantity, String to) {
+  public ConversaoCorrenteModel(Long id, String from, String to) {
     this.id = id;
     this.from = from;
-    this.quantity = quantity;
     this.to = to;
   }
 
@@ -88,14 +85,6 @@ public class ConversaoCorrenteModel {
 
   public void setTo(String to) {
     this.to = to;
-  }
-
-  public BigDecimal getQuantity() {
-    return quantity;
-  }
-
-  public void setQuantity(BigDecimal quantity) {
-    this.quantity = quantity;
   }
 
 }

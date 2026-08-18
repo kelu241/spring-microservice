@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: naming-service
+  config:
+    import: "optional:configserver:"
+  cloud:
+    service-registry:
+      auto-registration:
+        enabled: false
+server:
+  port: 8761
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    

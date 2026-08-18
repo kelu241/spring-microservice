@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import com.luciano.conversao_ativa.model.ConversaoAtiva;
 
@@ -41,6 +43,13 @@ public class ConversaoAtivaController {
         .retrieve()
         .body(ConversaoAtiva.class);
 
+    if (conversaoAtiva == null || conversaoAtiva.getConversionMultiple() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+        "Resposta invalida do servico de conversao de corrente");
+    }
+
+
+
     return new ConversaoAtiva(
         conversaoAtiva.getId(),
         from,
@@ -48,7 +57,7 @@ public class ConversaoAtivaController {
         quantity,
         conversaoAtiva.getEnviroment(),
         conversaoAtiva.getConversionMultiple(),
-        conversaoAtiva.getConversionMultiple().multiply(conversaoAtiva.getConversionMultiple()));
+      quantity.multiply(conversaoAtiva.getConversionMultiple()));
 
   }
 
