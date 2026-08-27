@@ -5,3 +5,4 @@ spring:
     import: "optional:configserver:"
 server:
   port: 8100
+debug: true  

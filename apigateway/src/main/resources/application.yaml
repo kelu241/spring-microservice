@@ -1,0 +1,29 @@
+spring:
+  config:
+    import: "optional:configserver:"
+  application:
+    name: apigateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+server:
+  port: 8765
+eureka:
+  client:
+    serviceUrl:
+      defaultZone:  http://localhost:8761/eureka
+
+logging:
+  level:
+    reactor.netty: INFO
+    org.springframework.cloud.gateway: DEBUG
+  file:
+    name: log/api-gateway.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 7

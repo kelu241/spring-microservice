@@ -13,6 +13,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import com.luciano.conversao_ativa.feign_clients.ConversaoAtivaProxy;
 import com.luciano.conversao_ativa.model.ConversaoAtiva;
 
 @Configuration(proxyBeanMethods = false)
@@ -28,11 +29,12 @@ class ConfigurerRestClient {
 public class ConversaoAtivaController {
   @Autowired
   private RestClient restClient;
+  @Autowired
+  private ConversaoAtivaProxy conversaoAtivaProxy;
 
   @GetMapping("/ativa/from/{from}/to/{to}/quantity/{quantity}")
   public ConversaoAtiva conversaoAtiva(@PathVariable String from, @PathVariable String to,
       @PathVariable BigDecimal quantity) {
-
     HashMap<String, String> urlValues = new HashMap<>();
 
     urlValues.put("from", from);
@@ -45,10 +47,8 @@ public class ConversaoAtivaController {
 
     if (conversaoAtiva == null || conversaoAtiva.getConversionMultiple() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
-        "Resposta invalida do servico de conversao de corrente");
+          "Resposta invalida do servico de conversao de corrente");
     }
-
-
 
     return new ConversaoAtiva(
         conversaoAtiva.getId(),
@@ -57,7 +57,23 @@ public class ConversaoAtivaController {
         quantity,
         conversaoAtiva.getEnviroment(),
         conversaoAtiva.getConversionMultiple(),
-      quantity.multiply(conversaoAtiva.getConversionMultiple()));
+        quantity.multiply(conversaoAtiva.getConversionMultiple()));
+
+  }
+
+  @GetMapping("feign/ativa/from/{from}/to/{to}/quantity/{quantity}")
+  public ConversaoAtiva conversaoAtivaFeign(@PathVariable String from, @PathVariable String to,
+      @PathVariable BigDecimal quantity) {
+
+    ConversaoAtiva conversaoAtiva = conversaoAtivaProxy.conversaoAtivaPegaValor(from, to);
+
+    return new ConversaoAtiva(conversaoAtiva.getId(),
+        from,
+        to,
+        quantity,
+        conversaoAtiva.getEnviroment() + " feign",
+        conversaoAtiva.getConversionMultiple(),
+        quantity.multiply(conversaoAtiva.getConversionMultiple()));
 
   }
 
