@@ -9,9 +9,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.luciano.conversao_ativa.feign_clients.ConversaoAtivaProxy;
 import com.luciano.conversao_ativa.model.ConversaoAtiva;
@@ -19,7 +21,7 @@ import com.luciano.conversao_ativa.model.ConversaoAtiva;
 @Configuration(proxyBeanMethods = false)
 class ConfigurerRestClient {
   @Bean
-  public RestClient restClient(RestClient.Builder builder) {
+  public RestTemplate restClient(RestTemplateBuilder builder) {
     return builder.build();
   }
 
@@ -28,7 +30,7 @@ class ConfigurerRestClient {
 @RestController
 public class ConversaoAtivaController {
   @Autowired
-  private RestClient restClient;
+  private RestTemplate restClient;
   @Autowired
   private ConversaoAtivaProxy conversaoAtivaProxy;
 
@@ -40,10 +42,9 @@ public class ConversaoAtivaController {
     urlValues.put("from", from);
     urlValues.put("to", to);
 
-    ConversaoAtiva conversaoAtiva = restClient.get()
-        .uri("http://localhost:8000/corrente/conversao-corrente/from/{from}/to/{to}", urlValues)
-        .retrieve()
-        .body(ConversaoAtiva.class);
+    ResponseEntity<ConversaoAtiva> responseEntity = restClient.getForEntity(
+        "http://localhost:8000/corrente/conversao-corrente/frRm/{from}/to/{to}", ConversaoAtiva.class, urlValues);
+    ConversaoAtiva conversaoAtiva = responseEntity.getBody();
 
     if (conversaoAtiva == null || conversaoAtiva.getConversionMultiple() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
